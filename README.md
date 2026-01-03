@@ -142,7 +142,6 @@ package main
 import (
     "fmt"
     "log"
-    "os"
 
     "github.com/sionpixley/inquiry/pkg/inquiry"
 )
@@ -156,21 +155,22 @@ type Example struct {
 func main() {
     db, err := inquiry.Connect[Example]("example.csv")
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
     // Don't forget to close the database.
     defer db.Close()
 
     rows, err := db.Query("SELECT * FROM Example WHERE Value > 80 ORDER BY Name ASC;")
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
+    defer rows.Close()
 
     for rows.Next() {
         var example Example
         err = rows.Scan(&example.Id, &example.Name, &example.Value)
         if err != nil {
-            log.Fatalln(err.Error())
+            log.Fatalln(err)
         }
         fmt.Printf("%d %s %f", example.Id, example.Name, example.Value)
         fmt.Println()
@@ -218,7 +218,6 @@ package main
 import (
     "fmt"
     "log"
-    "os"
 
     "github.com/sionpixley/inquiry/pkg/inquiry"
 )
@@ -237,21 +236,22 @@ func main() {
     
     db, err := inquiry.ConnectWithOptions[Example]("example.csv", options)
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
     // Don't forget to close the database.
     defer db.Close()
 
     rows, err := db.Query("SELECT * FROM Example WHERE Value > 80 ORDER BY Name ASC;")
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
+    defer rows.Close()
 
     for rows.Next() {
         var example Example
         err = rows.Scan(&example.Id, &example.Name, &example.Value)
         if err != nil {
-            log.Fatalln(err.Error())
+            log.Fatalln(err)
         }
         fmt.Printf("%d %s %f", example.Id, example.Name, example.Value)
         fmt.Println()
@@ -302,7 +302,6 @@ package main
 import (
     "fmt"
     "log"
-    "os"
 
     "github.com/sionpixley/inquiry/pkg/inquiry"
 )
@@ -326,26 +325,27 @@ func main() {
     
     db, err := inquiry.ConnectWithOptions[Example]("example.csv", options)
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
     // Don't forget to close the database.
     defer db.Close()
     
     err = inquiry.CreateTable[Test](db, "test.csv")
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
 
     rows, err := db.Query("SELECT * FROM Example WHERE Value > 80 ORDER BY Name ASC;")
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
+    defer rows.Close()
 
     for rows.Next() {
         var example Example
         err = rows.Scan(&example.Id, &example.Name, &example.Value)
         if err != nil {
-            log.Fatalln(err.Error())
+            log.Fatalln(err)
         }
         fmt.Printf("%d %s %f", example.Id, example.Name, example.Value)
         fmt.Println()
@@ -353,14 +353,15 @@ func main() {
 
     rows, err = db.Query("SELECT * FROM Test ORDER BY Id DESC;")
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
+    defer rows.Close()
 
     for rows.Next() {
         var test Test
         err = rows.Scan(&test.Id, &test.Val)
         if err != nil {
-            log.Fatalln(err.Error())
+            log.Fatalln(err)
         }
         fmt.Printf("%d %s", test.Id, test.Val)
         fmt.Println()
@@ -405,7 +406,6 @@ import (
     "database/sql"
     "fmt"
     "log"
-    "os"
 
     _ "github.com/mattn/go-sqlite3"
     "github.com/sionpixley/inquiry/pkg/inquiry"
@@ -425,7 +425,7 @@ type Test struct {
 func main() {
     db, err := sql.Open("sqlite3", "example.db")
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
     // Don't forget to close the database.
     defer db.Close()
@@ -437,19 +437,20 @@ func main() {
     
     err = inquiry.CreateTableWithOptions[Test](db, "test.csv", options)
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
 
     rows, err := db.Query("SELECT * FROM Example WHERE Value > 80 ORDER BY Name ASC;")
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
+    defer rows.Close()
 
     for rows.Next() {
         var example Example
         err = rows.Scan(&example.Id, &example.Name, &example.Value)
         if err != nil {
-            log.Fatalln(err.Error())
+            log.Fatalln(err)
         }
         fmt.Printf("%d %s %f", example.Id, example.Name, example.Value)
         fmt.Println()
@@ -457,14 +458,15 @@ func main() {
 
     rows, err = db.Query("SELECT * FROM Test ORDER BY Id DESC;")
     if err != nil {
-        log.Fatalln(err.Error())
+        log.Fatalln(err)
     }
+    defer rows.Close()
 
     for rows.Next() {
         var test Test
         err = rows.Scan(&test.Id, &test.Val)
         if err != nil {
-            log.Fatalln(err.Error())
+            log.Fatalln(err)
         }
         fmt.Printf("%d %s", test.Id, test.Val)
         fmt.Println()
